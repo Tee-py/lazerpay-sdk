@@ -120,7 +120,7 @@ mod tests {
             "statusCode": 200
           }"#;
         
-        let res: Response<Vec<CoinData>> = serde_json::from_str(data).unwrap();
+        let res: ApiResponse<Vec<CoinData>> = serde_json::from_str(data).unwrap();
 
         println!("Thirstyyyyy--> {}", res.data[0].created_at);
     }

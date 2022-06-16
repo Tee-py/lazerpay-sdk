@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Response<T> {
+pub struct ApiResponse<T> {
     pub message: String,
     pub status: String,
     #[serde(rename = "statusCode")]
