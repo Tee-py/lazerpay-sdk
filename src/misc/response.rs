@@ -9,3 +9,9 @@ pub struct GetRateResponse {
     pub status_code: i16,
     pub rate: f64
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct BalanceData {
+    pub coin: String,
+    pub amount: f64
+}

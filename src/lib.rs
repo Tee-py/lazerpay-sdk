@@ -1,38 +1,39 @@
-mod response;
 mod config;
-pub mod payments;
-pub mod swap;
-pub mod misc;
 pub mod link;
+pub mod misc;
+pub mod payments;
+mod response;
+pub mod swap;
 pub mod transfer;
-
-
-
-
 
 #[cfg(test)]
 mod tests {
+    use crate::config::ApiConfig;
+    use crate::link::payload::*;
+    use crate::misc::*;
     use crate::payments::payload::*;
+    use crate::response::*;
     use crate::swap::payload::*;
     use crate::transfer::payload::*;
-    use crate::response::*;
-    use crate::link::payload::*;
+    use dotenv::dotenv;
+    use reqwest::blocking::Client;
+    use std::env;
 
-    
+
     #[test]
     fn test_payload_structs() {
         let data1 = r#"{"reference":"5152eft78","customer_name":"Test Test","customer_email":"test@email.com","coin":"USDT","currency":"USD","amount":56.8,"accept_partial_payment":false}"#;
         let data2 = r#"{"title":"Test","description":"Test","type":"Test","currency":"USD","amount":56.8,"logo":"Test","redirect_url":"Test"}"#;
         let data3 = r#"{"status": "active"}"#;
         let data4 = r#"{"amount": 40.0, "recipient": "0x2323rb23uri9bg3yu4r", "coin": "ETH", "blockchain": "Ethereum"}"#;
-        let data5 = r#"{"amount": 40.0, "from_coin": "USDT", "to_coin": "ETH", "blockchain": "Ethereum"}"#;
+        let data5 =
+            r#"{"amount": 40.0, "from_coin": "USDT", "to_coin": "ETH", "blockchain": "Ethereum"}"#;
 
         let tx_data: InitializeTransaction = serde_json::from_str(data1).unwrap();
         let link_data: CreatePaymentLink = serde_json::from_str(data2).unwrap();
         let update_link_data: UpdatePaymentLink = serde_json::from_str(data3).unwrap();
         let transfer_data: Transfer = serde_json::from_str(data4).unwrap();
         let swap_data: Swap = serde_json::from_str(data5).unwrap();
-
 
         // Assertions
         assert_eq!(&tx_data.reference, "5152eft78");
@@ -58,10 +59,8 @@ mod tests {
         assert_eq!(&swap_data.to_coin, "ETH");
         assert_eq!(&swap_data.amount, &40.0);
         assert_eq!(&swap_data.blockchain, "Ethereum");
-
-       
     }
-    
+
     #[test]
     fn test_response_struct() {
         let data = r#"{
@@ -119,9 +118,31 @@ mod tests {
             "status": "success",
             "statusCode": 200
           }"#;
-        
+
         let res: ApiResponse<Vec<CoinData>> = serde_json::from_str(data).unwrap();
 
         println!("Thirstyyyyy--> {}", res.data[0].created_at);
+    }
+
+    #[test]
+    fn test_misc() -> Result<(), Box<dyn std::error::Error>> {
+      // Load Env Variables
+      dotenv().ok();
+      let secret_key = env::var("SECRET_KEY")?;
+      let public_key = env::var("PUBLIC_KEY")?;
+      // let base_url = env::var("BASE_URL").unwrap();
+      let config = ApiConfig::new(secret_key, public_key);
+      let client = Client::new();
+
+      let misc = Misc{ api_config: config, api_client: client};
+      let coins = misc.get_accepted_coins()?;
+      let rate = misc.get_rate("ETH", "USD")?;
+      let balance = misc.get_balance("USDT")?;
+
+      assert_eq!(coins.status_code, 200);
+      assert_eq!(rate.status_code, 200);
+      assert_eq!(balance.status_code, 200);
+
+      Ok(())
     }
 }
