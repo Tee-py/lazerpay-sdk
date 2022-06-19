@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ApiResponse<T> {
@@ -6,9 +6,8 @@ pub struct ApiResponse<T> {
     pub status: String,
     #[serde(rename = "statusCode")]
     pub status_code: i16,
-    pub data: T
+    pub data: T,
 }
-
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -24,5 +23,5 @@ pub struct CoinData {
     #[serde(rename = "createdAt")]
     pub created_at: String,
     #[serde(rename = "updatedAt")]
-    pub updated_at: String
+    pub updated_at: String,
 }
