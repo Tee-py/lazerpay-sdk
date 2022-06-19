@@ -1,4 +1,7 @@
+#[macro_use]
+extern crate serde_derive;
 mod config;
+mod error;
 pub mod link;
 pub mod misc;
 pub mod payments;
@@ -13,8 +16,8 @@ mod tests {
     use crate::misc::*;
     use crate::payments::payload::*;
     use crate::response::*;
-    use crate::swap::payload::*;
-    use crate::transfer::payload::*;
+    use crate::swap::{payload::*, CryptoSwap};
+    use crate::transfer::{payload::*, CryptoTransfer};
     use dotenv::dotenv;
     use reqwest::blocking::Client;
     use std::env;
@@ -27,13 +30,13 @@ mod tests {
         let data3 = r#"{"status": "active"}"#;
         let data4 = r#"{"amount": 40.0, "recipient": "0x2323rb23uri9bg3yu4r", "coin": "ETH", "blockchain": "Ethereum"}"#;
         let data5 =
-            r#"{"amount": 40.0, "from_coin": "USDT", "to_coin": "ETH", "blockchain": "Ethereum"}"#;
+            r#"{"amount": 40.0, "fromCoin": "USDT", "toCoin": "ETH", "blockchain": "Ethereum"}"#;
 
         let tx_data: InitializeTransaction = serde_json::from_str(data1).unwrap();
         let link_data: CreatePaymentLink = serde_json::from_str(data2).unwrap();
         let update_link_data: UpdatePaymentLink = serde_json::from_str(data3).unwrap();
         let transfer_data: Transfer = serde_json::from_str(data4).unwrap();
-        let swap_data: Swap = serde_json::from_str(data5).unwrap();
+        let swap_data: SwapPayload = serde_json::from_str(data5).unwrap();
 
         // Assertions
         assert_eq!(&tx_data.reference, "5152eft78");
@@ -126,22 +129,88 @@ mod tests {
 
     #[test]
     fn test_misc() -> Result<(), Box<dyn std::error::Error>> {
-      // Load Env Variables
+        // Load Env Variables
+        dotenv().ok();
+        let secret_key = env::var("SECRET_KEY")?;
+        let public_key = env::var("PUBLIC_KEY")?;
+        let base_url = env::var("BASE_URL").unwrap();
+        let config = ApiConfig {
+            secret_key,
+            public_key,
+            base_url,
+        };
+        let client = Client::new();
+
+        let misc = Misc {
+            api_config: config,
+            api_client: client,
+        };
+        let coins = misc.get_accepted_coins()?;
+        let rate = misc.get_rate("ETH", "USD")?;
+        let balance = misc.get_balance("USDT")?;
+
+        assert_eq!(coins.status_code, 200);
+        assert_eq!(rate.status_code, 200);
+        assert_eq!(balance.status_code, 200);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_swap() -> Result<(), Box<dyn std::error::Error>> {
+        dotenv().ok();
+        let secret_key = env::var("SECRET_KEY")?;
+        let public_key = env::var("PUBLIC_KEY")?;
+        let base_url = env::var("BASE_URL").unwrap();
+        let config = ApiConfig {
+            secret_key,
+            public_key,
+            base_url,
+        };
+        let client = Client::new();
+
+        let crypto_swap = CryptoSwap {
+            api_client: client,
+            api_config: config,
+        };
+        let swap_payload = SwapPayload {
+            to_coin: "USDT".to_string(),
+            from_coin: "BNB".to_string(),
+            amount: 0.1,
+            blockchain: "Binance Smart Chain".to_string(),
+        };
+        let _swap_res = crypto_swap.swap(&swap_payload);
+        let _amount_out = crypto_swap.amount_out(&swap_payload);
+        Ok(())
+    }
+    #[test]
+    fn test_transfer() -> Result<(), Box<dyn std::error::Error>> {
       dotenv().ok();
       let secret_key = env::var("SECRET_KEY")?;
       let public_key = env::var("PUBLIC_KEY")?;
-      // let base_url = env::var("BASE_URL").unwrap();
-      let config = ApiConfig::new(secret_key, public_key);
+      let base_url = env::var("BASE_URL").unwrap();
+      let config = ApiConfig {
+          secret_key,
+          public_key,
+          base_url,
+      };
       let client = Client::new();
 
-      let misc = Misc{ api_config: config, api_client: client};
-      let coins = misc.get_accepted_coins()?;
-      let rate = misc.get_rate("ETH", "USD")?;
-      let balance = misc.get_balance("USDT")?;
-
-      assert_eq!(coins.status_code, 200);
-      assert_eq!(rate.status_code, 200);
-      assert_eq!(balance.status_code, 200);
+      let transfer_client = CryptoTransfer {
+        api_client: client,
+        api_config: config
+      };
+      let payload = Transfer {
+        amount: 100.0,
+        recipient: "0x0B4d358D349809037003F96A3593ff9015E89efA".to_string(),
+        coin: "USDT".to_string(),
+        blockchain: "Binance Smart Chain".to_string()
+      }; 
+      let res = transfer_client.transfer(&payload);
+      match res {
+        Ok(resp) => println!("Success --> {:?}", resp),
+        Err(err) => println!("Error --> {:?}", err),
+      }
 
       Ok(())
     }
