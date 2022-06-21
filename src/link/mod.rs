@@ -8,8 +8,8 @@ pub mod payload;
 mod response;
 
 pub struct PaymentLink {
-    api_client: reqwest::blocking::Client,
-    api_config: ApiConfig,
+    pub api_client: reqwest::blocking::Client,
+    pub api_config: ApiConfig,
 }
 
 impl PaymentLink {
