@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct InitializeTransaction {
+pub struct InitializePayment {
     pub reference: String,
     pub customer_name: String,
     pub customer_email: String,
