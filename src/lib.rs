@@ -12,7 +12,8 @@ pub mod transfer;
 #[cfg(test)]
 mod tests {
     use crate::config::ApiConfig;
-    use crate::link::payload::*;
+    use crate::link::{payload::*, PaymentLink};
+    use crate::payments::Payment;
     use crate::misc::*;
     use crate::payments::payload::*;
     use crate::response::*;
@@ -22,6 +23,7 @@ mod tests {
     use reqwest::blocking::Client;
     use std::env;
 
+    type TestResult = Result<(), Box<dyn std::error::Error>>;
 
     #[test]
     fn test_payload_structs() {
@@ -32,7 +34,7 @@ mod tests {
         let data5 =
             r#"{"amount": 40.0, "fromCoin": "USDT", "toCoin": "ETH", "blockchain": "Ethereum"}"#;
 
-        let tx_data: InitializeTransaction = serde_json::from_str(data1).unwrap();
+        let tx_data: InitializePayment = serde_json::from_str(data1).unwrap();
         let link_data: CreatePaymentLink = serde_json::from_str(data2).unwrap();
         let update_link_data: UpdatePaymentLink = serde_json::from_str(data3).unwrap();
         let transfer_data: Transfer = serde_json::from_str(data4).unwrap();
@@ -128,7 +130,7 @@ mod tests {
     }
 
     #[test]
-    fn test_misc() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_misc() -> TestResult {
         // Load Env Variables
         dotenv().ok();
         let secret_key = env::var("SECRET_KEY")?;
@@ -157,7 +159,7 @@ mod tests {
     }
 
     #[test]
-    fn test_swap() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_swap() -> TestResult {
         dotenv().ok();
         let secret_key = env::var("SECRET_KEY")?;
         let public_key = env::var("PUBLIC_KEY")?;
@@ -184,7 +186,7 @@ mod tests {
         Ok(())
     }
     #[test]
-    fn test_transfer() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_transfer() -> TestResult {
       dotenv().ok();
       let secret_key = env::var("SECRET_KEY")?;
       let public_key = env::var("PUBLIC_KEY")?;
@@ -212,6 +214,54 @@ mod tests {
         Err(err) => println!("Error --> {:?}", err),
       }
 
+      Ok(())
+    }
+
+    #[test]
+    fn test_link() -> TestResult {
+      dotenv().ok();
+      let secret_key = env::var("SECRET_KEY")?;
+      let public_key = env::var("PUBLIC_KEY")?;
+      let base_url = env::var("BASE_URL").unwrap();
+      let config = ApiConfig {
+          secret_key,
+          public_key,
+          base_url,
+      };
+      let client = Client::new();
+
+      let link_client = PaymentLink { api_client: client, api_config: config };
+      let _all_links = link_client.fetch_all()?;
+      let dat1 = CreatePaymentLink {
+        title: "Test".to_string(),
+        description: "Test".to_string(),
+        amount: 40.0,
+        typ: "standard".to_string(),
+        currency: "USD".to_string(),
+        logo: "https://test.com/logo.png".to_string(),
+        redirect_url: "https://test.com/payment-redirect".to_string()
+      };
+      let _create_resp = link_client.create(&dat1)?;
+      let _link = link_client.fetch(&_create_resp.data.id);
+      Ok(())
+    }
+
+    #[test]
+    fn test_payment() -> TestResult {
+      dotenv().ok();
+      let secret_key = env::var("SECRET_KEY")?;
+      let public_key = env::var("PUBLIC_KEY")?;
+      let base_url = env::var("BASE_URL").unwrap();
+      let config = ApiConfig {
+          secret_key,
+          public_key,
+          base_url,
+      };
+      let client = Client::new();
+
+      let _payment_client = Payment { api_client: client, api_config: config };
+      // Test Initialize Payment
+      // Test Verify Payment
       Ok(())
     }
 }
