@@ -158,93 +158,88 @@ mod tests {
         Ok(())
     }
 
-    //#[test]
-    // fn test_swap() -> TestResult {
-    //     dotenv().ok();
-    //     let secret_key = env::var("SECRET_KEY")?;
-    //     let public_key = env::var("PUBLIC_KEY")?;
-    //     let base_url = env::var("BASE_URL").unwrap();
-    //     let config = ApiConfig {
-    //         secret_key,
-    //         public_key,
-    //         base_url,
-    //     };
-    //     let client = Client::new();
+    #[tokio::test]
+    async fn test_swap() -> TestResult {
+        dotenv().ok();
+        let secret_key = env::var("SECRET_KEY")?;
+        let public_key = env::var("PUBLIC_KEY")?;
+        let base_url = env::var("BASE_URL").unwrap();
+        let config = ApiConfig {
+            secret_key,
+            public_key,
+            base_url,
+        };
+        let client = Client::new();
 
-    //     let crypto_swap = CryptoSwap {
-    //         api_client: client,
-    //         api_config: config,
-    //     };
-    //     let swap_payload = SwapPayload {
-    //         to_coin: "USDT".to_string(),
-    //         from_coin: "BNB".to_string(),
-    //         amount: 0.1,
-    //         blockchain: "Binance Smart Chain".to_string(),
-    //     };
-    //     let _swap_res = crypto_swap.swap(&swap_payload);
-    //     let _amount_out = crypto_swap.amount_out(&swap_payload);
-    //     Ok(())
-    // }
-    // #[test]
-    // fn test_transfer() -> TestResult {
-    //   dotenv().ok();
-    //   let secret_key = env::var("SECRET_KEY")?;
-    //   let public_key = env::var("PUBLIC_KEY")?;
-    //   let base_url = env::var("BASE_URL").unwrap();
-    //   let config = ApiConfig {
-    //       secret_key,
-    //       public_key,
-    //       base_url,
-    //   };
-    //   let client = Client::new();
+        let crypto_swap = CryptoSwap {
+            api_client: client,
+            api_config: config,
+        };
+        let swap_payload = SwapPayload {
+            to_coin: "USDT".to_string(),
+            from_coin: "BNB".to_string(),
+            amount: 0.1,
+            blockchain: "Binance Smart Chain".to_string(),
+        };
+        let _swap_res = crypto_swap.swap(&swap_payload).await?;
+        let _amount_out = crypto_swap.amount_out(&swap_payload).await?;
+        Ok(())
+    }
+    #[tokio::test]
+    async fn test_transfer() -> TestResult {
+      dotenv().ok();
+      let secret_key = env::var("SECRET_KEY")?;
+      let public_key = env::var("PUBLIC_KEY")?;
+      let base_url = env::var("BASE_URL").unwrap();
+      let config = ApiConfig {
+          secret_key,
+          public_key,
+          base_url,
+      };
+      let client = Client::new();
 
-    //   let transfer_client = CryptoTransfer {
-    //     api_client: client,
-    //     api_config: config
-    //   };
-    //   let payload = Transfer {
-    //     amount: 100.0,
-    //     recipient: "0x0B4d358D349809037003F96A3593ff9015E89efA".to_string(),
-    //     coin: "USDT".to_string(),
-    //     blockchain: "Binance Smart Chain".to_string()
-    //   }; 
-    //   let res = transfer_client.transfer(&payload);
-    //   match res {
-    //     Ok(resp) => println!("Success --> {:?}", resp),
-    //     Err(err) => println!("Error --> {:?}", err),
-    //   }
+      let transfer_client = CryptoTransfer {
+        api_client: client,
+        api_config: config
+      };
+      let payload = Transfer {
+        amount: 100.0,
+        recipient: "0x0B4d358D349809037003F96A3593ff9015E89efA".to_string(),
+        coin: "USDT".to_string(),
+        blockchain: "Binance Smart Chain".to_string()
+      }; 
+      let _res = transfer_client.transfer(&payload).await?;
+      Ok(())
+    }
 
-    //   Ok(())
-    // }
+    #[tokio::test]
+    async fn test_link() -> TestResult {
+      dotenv().ok();
+      let secret_key = env::var("SECRET_KEY")?;
+      let public_key = env::var("PUBLIC_KEY")?;
+      let base_url = env::var("BASE_URL").unwrap();
+      let config = ApiConfig {
+          secret_key,
+          public_key,
+          base_url,
+      };
+      let client = Client::new();
 
-    // #[test]
-    // fn test_link() -> TestResult {
-    //   dotenv().ok();
-    //   let secret_key = env::var("SECRET_KEY")?;
-    //   let public_key = env::var("PUBLIC_KEY")?;
-    //   let base_url = env::var("BASE_URL").unwrap();
-    //   let config = ApiConfig {
-    //       secret_key,
-    //       public_key,
-    //       base_url,
-    //   };
-    //   let client = Client::new();
-
-    //   let link_client = PaymentLink { api_client: client, api_config: config };
-    //   let _all_links = link_client.fetch_all()?;
-    //   let dat1 = CreatePaymentLink {
-    //     title: "Test".to_string(),
-    //     description: "Test".to_string(),
-    //     amount: 40.0,
-    //     typ: "standard".to_string(),
-    //     currency: "USD".to_string(),
-    //     logo: "https://test.com/logo.png".to_string(),
-    //     redirect_url: "https://test.com/payment-redirect".to_string()
-    //   };
-    //   let _create_resp = link_client.create(&dat1)?;
-    //   let _link = link_client.fetch(&_create_resp.data.id);
-    //   Ok(())
-    // }
+      let link_client = PaymentLink { api_client: client, api_config: config };
+      let _all_links = link_client.fetch_all().await?;
+      let dat1 = CreatePaymentLink {
+        title: "Test".to_string(),
+        description: "Test".to_string(),
+        amount: 40.0,
+        typ: "standard".to_string(),
+        currency: "USD".to_string(),
+        logo: "https://test.com/logo.png".to_string(),
+        redirect_url: "https://test.com/payment-redirect".to_string()
+      };
+      let _create_resp = link_client.create(&dat1).await?;
+      let _link = link_client.fetch(&_create_resp.data.id).await?;
+      Ok(())
+    }
 
     // #[test]
     // fn test_payment() -> TestResult {

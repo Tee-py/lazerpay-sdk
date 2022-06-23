@@ -17,23 +17,23 @@ pub struct Resp {
 }
 
 pub struct CryptoTransfer {
-    pub api_client: reqwest::blocking::Client,
+    pub api_client: reqwest::Client,
     pub api_config: ApiConfig,
 }
 
 impl CryptoTransfer {
 
-    pub fn transfer(&self, payload: &Transfer) -> Result<Resp, Error> {
+    pub async fn transfer(&self, payload: &Transfer) -> Result<Resp, Error> {
         let url = format!("{}/transfer", self.api_config.base_url);
         let resp = self
             .api_client
             .post(url)
             .headers(self.api_config.create_header())
             .json(payload)
-            .send()?;
+            .send().await?;
         match resp.status() {
-            StatusCode::OK => Ok(resp.json()?),
-            _ => Err(Error::RequestError(resp.json()?)),
+            StatusCode::OK => Ok(resp.json().await?),
+            _ => Err(Error::RequestError(resp.json().await?)),
         }
     }
 }
