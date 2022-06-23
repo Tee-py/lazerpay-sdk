@@ -241,22 +241,22 @@ mod tests {
       Ok(())
     }
 
-    // #[test]
-    // fn test_payment() -> TestResult {
-      // dotenv().ok();
-      // let secret_key = env::var("SECRET_KEY")?;
-      // let public_key = env::var("PUBLIC_KEY")?;
-      // let base_url = env::var("BASE_URL").unwrap();
-      // let config = ApiConfig {
-      //     secret_key,
-      //     public_key,
-      //     base_url,
-      // };
-      // let client = Client::new();
+    #[tokio::test]
+    async fn test_payment() -> TestResult {
+      dotenv().ok();
+      let secret_key = env::var("SECRET_KEY")?;
+      let public_key = env::var("PUBLIC_KEY")?;
+      let base_url = env::var("BASE_URL").unwrap();
+      let config = ApiConfig {
+          secret_key,
+          public_key,
+          base_url,
+      };
+      let client = Client::new();
 
-      // let _payment_client = Payment { api_client: client, api_config: config };
-      // // Test Initialize Payment
-      // // Test Verify Payment
-      // Ok(())
-    //}
+      let _payment_client = Payment { api_client: client, api_config: config };
+      // Test Initialize Payment
+      // Test Verify Payment
+      Ok(())
+    }
 }
