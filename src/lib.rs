@@ -53,8 +53,8 @@ mod tests {
         assert_eq!(&link_data.typ, "Test");
         assert_eq!(&link_data.currency, "USD");
         assert_eq!(&link_data.amount, &56.8);
-        assert_eq!(&link_data.logo, "Test");
-        assert_eq!(&link_data.redirect_url, "Test");
+        assert!(!&link_data.logo.is_none());
+        assert!(!&link_data.redirect_url.is_none());
         assert_eq!(&update_link_data.status, "active");
         assert_eq!(&transfer_data.amount, &40.0);
         assert_eq!(&transfer_data.recipient, "0x2323rb23uri9bg3yu4r");
@@ -176,9 +176,9 @@ mod tests {
             api_config: config,
         };
         let swap_payload = SwapPayload {
-            to_coin: "USDT".to_string(),
-            from_coin: "BNB".to_string(),
-            amount: 0.1,
+            to_coin: "DAI".to_string(),
+            from_coin: "USDT".to_string(),
+            amount: 1.0,
             blockchain: "Binance Smart Chain".to_string(),
         };
         let _swap_res = crypto_swap.swap(&swap_payload).await?;
@@ -203,8 +203,8 @@ mod tests {
         api_config: config
       };
       let payload = Transfer {
-        amount: 100.0,
-        recipient: "0x0B4d358D349809037003F96A3593ff9015E89efA".to_string(),
+        amount: 1.0,
+        recipient: "0xF65330dC75e32B20Be62f503a337cD1a072f898f".to_string(),
         coin: "USDT".to_string(),
         blockchain: "Binance Smart Chain".to_string()
       }; 
@@ -227,17 +227,22 @@ mod tests {
 
       let link_client = PaymentLink { api_client: client, api_config: config };
       let _all_links = link_client.fetch_all().await?;
-      let dat1 = CreatePaymentLink {
+      let _dat1 = CreatePaymentLink {
         title: "Test".to_string(),
-        description: "Test".to_string(),
+        description: "Testing My Rust SDK.".to_string(),
         amount: 40.0,
         typ: "standard".to_string(),
         currency: "USD".to_string(),
-        logo: "https://test.com/logo.png".to_string(),
-        redirect_url: "https://test.com/payment-redirect".to_string()
+        logo: None,
+        redirect_url: None
       };
-      let _create_resp = link_client.create(&dat1).await?;
+      let _dat2 = UpdatePaymentLink {
+        status: "inactive".to_string()
+      };
+      let _create_resp = link_client.create(&_dat1).await?;
       let _link = link_client.fetch(&_create_resp.data.id).await?;
+      let _updated = link_client.update(&_link.data.id, &_dat2).await?;
+      assert_eq!(_updated.data.status, _dat2.status);
       Ok(())
     }
 

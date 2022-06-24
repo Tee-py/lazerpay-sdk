@@ -7,9 +7,9 @@ pub struct CreatePaymentLink {
     pub amount: f64,
     #[serde(rename = "type")]
     pub typ: String,
-    pub logo: String,
+    pub logo: Option<String>,
     pub currency: String,
-    pub redirect_url: String
+    pub redirect_url: Option<String>
 }
 
 #[derive(Serialize, Deserialize, Debug)]
