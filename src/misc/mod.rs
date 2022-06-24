@@ -15,6 +15,12 @@ pub struct Misc {
 }
 
 impl Misc {
+    pub fn new(config: ApiConfig, client: Client) -> Self {
+        Self {
+            api_client: client,
+            api_config: config,
+        }
+    }
     pub async fn get_accepted_coins(&self) -> Result<ApiResponse<Vec<CoinData>>, Error> {
         let route = format!("{}/coins", self.api_config.base_url);
         let resp = self

@@ -1,4 +1,4 @@
-use reqwest::StatusCode;
+use reqwest::{StatusCode, Client};
 
 use crate::{config::ApiConfig, error::Error, response::ApiResponse};
 
@@ -13,11 +13,17 @@ mod response;
 type LinksResult = Result<PaymentLinksResponse<Vec<LinkData>>, Error>;
 
 pub struct PaymentLink {
-    pub api_client: reqwest::Client,
+    pub api_client: Client,
     pub api_config: ApiConfig,
 }
 
 impl PaymentLink {
+    pub fn new(config: ApiConfig, client: Client) -> Self {
+        Self {
+            api_client: client,
+            api_config: config,
+        }
+    }
     pub async fn fetch_all(&self) -> LinksResult {
         let url = format!("{}/payment-links", self.api_config.base_url);
         let resp = self

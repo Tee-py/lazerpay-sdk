@@ -1,7 +1,4 @@
-use crate::{
-    config::ApiConfig,
-    error::Error, response::ApiResponse,
-};
+use crate::{config::ApiConfig, error::Error, response::ApiResponse};
 use reqwest::Client;
 use reqwest::StatusCode;
 
@@ -16,6 +13,13 @@ pub struct CryptoSwap {
 }
 
 impl CryptoSwap {
+    pub fn new(config: ApiConfig, client: Client) -> Self {
+        Self {
+            api_config: config,
+            api_client: client,
+        }
+    }
+
     pub async fn swap(&self, payload: &SwapPayload) -> Result<(), Error> {
         let url = format!("{}/swap/crypto", self.api_config.base_url);
         let resp = self
@@ -23,7 +27,8 @@ impl CryptoSwap {
             .post(url)
             .headers(self.api_config.create_header())
             .json(payload)
-            .send().await?;
+            .send()
+            .await?;
         // println!("{}", resp.text()?);
         match resp.status() {
             StatusCode::OK => Ok(()),
@@ -39,7 +44,8 @@ impl CryptoSwap {
             .post(url)
             .headers(self.api_config.create_header())
             .json(&payload)
-            .send().await?;
+            .send()
+            .await?;
         match resp.status() {
             StatusCode::OK => Ok(resp.json().await?),
             _ => Err(Error::RequestError(resp.json().await?)),

@@ -1,4 +1,4 @@
-use reqwest::StatusCode;
+use reqwest::{Client, StatusCode};
 
 use crate::{config::ApiConfig, error::Error, response::ApiResponse};
 
@@ -12,10 +12,16 @@ mod response;
 
 pub struct Payment {
     pub api_config: ApiConfig,
-    pub api_client: reqwest::Client,
+    pub api_client: Client,
 }
 
 impl Payment {
+    pub fn new(config: ApiConfig, client: Client) -> Self {
+        Self {
+            api_client: client,
+            api_config: config,
+        }
+    }
     pub async fn initialize(
         &self,
         payload: &InitializePayment,
@@ -26,7 +32,8 @@ impl Payment {
             .post(url)
             .json(payload)
             .headers(self.api_config.create_header())
-            .send().await?;
+            .send()
+            .await?;
         match resp.status() {
             StatusCode::OK => Ok(resp.json().await?),
             _ => Err(Error::RequestError(resp.json().await?)),
@@ -39,7 +46,8 @@ impl Payment {
             .api_client
             .get(url)
             .headers(self.api_config.create_header())
-            .send().await?;
+            .send()
+            .await?;
 
         match resp.status() {
             StatusCode::OK => {
@@ -50,7 +58,7 @@ impl Payment {
                 };
                 Ok(resp_struct)
             }
-            _ => Err(Error::RequestError(resp.json().await?))
+            _ => Err(Error::RequestError(resp.json().await?)),
         }
     }
 }
