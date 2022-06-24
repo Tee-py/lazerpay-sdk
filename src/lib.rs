@@ -260,8 +260,19 @@ mod tests {
       let client = Client::new();
 
       let _payment_client = Payment { api_client: client, api_config: config };
+      let _dat = InitializePayment {
+          reference: "qyrbfcw".to_string(),
+          customer_name: "Test Customer".to_string(),
+          customer_email: "customer@lazertest.com".to_string(),
+          coin: "USDT".to_string(),
+          currency: "USD".to_string(),
+          amount: 4.0,
+          accept_partial_payment: true
+      };
       // Test Initialize Payment
+      let _init_resp = _payment_client.initialize(&_dat).await?;
       // Test Verify Payment
+      let _ver_data = _payment_client.verify("weferf").await?;
       Ok(())
     }
 }
