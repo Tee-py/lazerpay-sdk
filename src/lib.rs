@@ -1,11 +1,11 @@
 #[macro_use]
 extern crate serde_derive;
-mod config;
-mod error;
+pub mod config;
+pub mod error;
 pub mod link;
 pub mod misc;
 pub mod payments;
-mod response;
+pub mod response;
 pub mod swap;
 pub mod transfer;
 
@@ -143,10 +143,7 @@ mod tests {
         };
         let client = Client::new();
 
-        let misc = Misc {
-            api_config: config,
-            api_client: client,
-        };
+        let misc = Misc::new(config, client);
         let coins = misc.get_accepted_coins().await?;
         let rate = misc.get_rate("ETH", "USD").await?;
         let balance = misc.get_balance("USDT").await?;
@@ -171,10 +168,7 @@ mod tests {
         };
         let client = Client::new();
 
-        let crypto_swap = CryptoSwap {
-            api_client: client,
-            api_config: config,
-        };
+        let crypto_swap = CryptoSwap::new(config, client);
         let swap_payload = SwapPayload {
             to_coin: "DAI".to_string(),
             from_coin: "USDT".to_string(),
@@ -198,10 +192,7 @@ mod tests {
       };
       let client = Client::new();
 
-      let transfer_client = CryptoTransfer {
-        api_client: client,
-        api_config: config
-      };
+      let transfer_client = CryptoTransfer::new(config, client);
       let payload = Transfer {
         amount: 1.0,
         recipient: "0xF65330dC75e32B20Be62f503a337cD1a072f898f".to_string(),
@@ -259,7 +250,7 @@ mod tests {
       };
       let client = Client::new();
 
-      let _payment_client = Payment { api_client: client, api_config: config };
+      let _payment_client = Payment::new(config, client);
       let _dat = InitializePayment {
           reference: "qyrbfcw".to_string(),
           customer_name: "Test Customer".to_string(),
