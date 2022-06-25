@@ -12,20 +12,11 @@ pub mod utils;
 
 #[cfg(test)]
 mod tests {
-    use crate::config::ApiConfig;
-    use crate::link::{payload::*, PaymentLink};
-    use crate::payments::Payment;
-    use crate::misc::*;
+    use crate::link::{payload::*};
     use crate::payments::payload::*;
     use crate::response::*;
-    use crate::swap::{payload::*, CryptoSwap};
-    use crate::transfer::{payload::*, CryptoTransfer};
-    use crate::utils::generate_reference;
-    use dotenv::dotenv;
-    use reqwest::Client;
-    use std::env;
-
-    type TestResult = Result<(), Box<dyn std::error::Error>>;
+    use crate::swap::{payload::*};
+    use crate::transfer::{payload::*};
 
     #[test]
     fn test_payload_structs() {
@@ -127,144 +118,5 @@ mod tests {
           }"#;
 
         let _res: ApiResponse<Vec<CoinData>> = serde_json::from_str(data).unwrap();
-    }
-
-    #[tokio::test]
-    async fn test_misc() -> TestResult {
-        // Load Env Variables
-        dotenv().ok();
-        let secret_key = env::var("SECRET_KEY")?;
-        let public_key = env::var("PUBLIC_KEY")?;
-        let base_url = env::var("BASE_URL").unwrap();
-        let config = ApiConfig {
-            secret_key,
-            public_key,
-            base_url,
-        };
-        let client = Client::new();
-
-        let misc = Misc::new(&config, &client);
-        let coins = misc.get_accepted_coins().await?;
-        let rate = misc.get_rate("ETH", "USD").await?;
-        let balance = misc.get_balance("USDT").await?;
-
-        assert_eq!(coins.status_code, 200);
-        assert_eq!(rate.status_code, 200);
-        assert_eq!(balance.status_code, 200);
-
-        Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_swap() -> TestResult {
-        dotenv().ok();
-        let secret_key = env::var("SECRET_KEY")?;
-        let public_key = env::var("PUBLIC_KEY")?;
-        let base_url = env::var("BASE_URL").unwrap();
-        let config = ApiConfig {
-            secret_key,
-            public_key,
-            base_url,
-        };
-        let client = Client::new();
-
-        let crypto_swap = CryptoSwap::new(&config, &client);
-        let swap_payload = SwapPayload {
-            to_coin: "DAI".to_string(),
-            from_coin: "USDT".to_string(),
-            amount: 1.0,
-            blockchain: "Binance Smart Chain".to_string(),
-        };
-        let _swap_res = crypto_swap.swap(&swap_payload).await?;
-        let _amount_out = crypto_swap.amount_out(&swap_payload).await?;
-        Ok(())
-    }
-    #[tokio::test]
-    async fn test_transfer() -> TestResult {
-      dotenv().ok();
-      let secret_key = env::var("SECRET_KEY")?;
-      let public_key = env::var("PUBLIC_KEY")?;
-      let base_url = env::var("BASE_URL").unwrap();
-      let config = ApiConfig {
-          secret_key,
-          public_key,
-          base_url,
-      };
-      let client = Client::new();
-
-      let transfer_client = CryptoTransfer::new(&config, &client);
-      let payload = Transfer {
-        amount: 1.0,
-        recipient: "0xF65330dC75e32B20Be62f503a337cD1a072f898f".to_string(),
-        coin: "USDT".to_string(),
-        blockchain: "Binance Smart Chain".to_string()
-      }; 
-      let _res = transfer_client.transfer(&payload).await?;
-      Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_link() -> TestResult {
-      dotenv().ok();
-      let secret_key = env::var("SECRET_KEY")?;
-      let public_key = env::var("PUBLIC_KEY")?;
-      let base_url = env::var("BASE_URL").unwrap();
-      let config = ApiConfig {
-          secret_key,
-          public_key,
-          base_url,
-      };
-      let client = Client::new();
-
-      let link_client = PaymentLink { api_client: &client, api_config: &config };
-      let _all_links = link_client.fetch_all().await?;
-      let _dat1 = CreatePaymentLink {
-        title: "Test".to_string(),
-        description: "Testing My Rust SDK.".to_string(),
-        amount: 40.0,
-        typ: "standard".to_string(),
-        currency: "USD".to_string(),
-        logo: None,
-        redirect_url: None
-      };
-      let _dat2 = UpdatePaymentLink {
-        status: "inactive".to_string()
-      };
-      let _create_resp = link_client.create(&_dat1).await?;
-      let _link = link_client.fetch(&_create_resp.data.id).await?;
-      let _updated = link_client.update(&_link.data.id, &_dat2).await?;
-      assert_eq!(_updated.data.status, _dat2.status);
-      Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_payment() -> TestResult {
-      dotenv().ok();
-      let secret_key = env::var("SECRET_KEY")?;
-      let public_key = env::var("PUBLIC_KEY")?;
-      let base_url = env::var("BASE_URL").unwrap();
-      let config = ApiConfig {
-          secret_key,
-          public_key,
-          base_url,
-      };
-      let client = Client::new();
-
-      let _payment_client = Payment::new(&config, &client);
-      let tx_ref = generate_reference();
-      let _dat = InitializePayment {
-          reference: tx_ref,
-          customer_name: "Test Customer".to_string(),
-          customer_email: "customer@lazertest.com".to_string(),
-          coin: "USDT".to_string(),
-          currency: "USD".to_string(),
-          amount: 4.0,
-          accept_partial_payment: true
-      };
-      // Test Initialize Payment
-      let _init_resp = _payment_client.initialize(&_dat).await?;
-      // Test Verify Payment
-      let _ver_data = _payment_client.verify(&_dat.reference).await?;
-      Ok(())
     }
 }
