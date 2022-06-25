@@ -143,7 +143,7 @@ mod tests {
         };
         let client = Client::new();
 
-        let misc = Misc::new(config, client);
+        let misc = Misc::new(&config, &client);
         let coins = misc.get_accepted_coins().await?;
         let rate = misc.get_rate("ETH", "USD").await?;
         let balance = misc.get_balance("USDT").await?;
@@ -168,7 +168,7 @@ mod tests {
         };
         let client = Client::new();
 
-        let crypto_swap = CryptoSwap::new(config, client);
+        let crypto_swap = CryptoSwap::new(&config, &client);
         let swap_payload = SwapPayload {
             to_coin: "DAI".to_string(),
             from_coin: "USDT".to_string(),
@@ -192,7 +192,7 @@ mod tests {
       };
       let client = Client::new();
 
-      let transfer_client = CryptoTransfer::new(config, client);
+      let transfer_client = CryptoTransfer::new(&config, &client);
       let payload = Transfer {
         amount: 1.0,
         recipient: "0xF65330dC75e32B20Be62f503a337cD1a072f898f".to_string(),
@@ -216,7 +216,7 @@ mod tests {
       };
       let client = Client::new();
 
-      let link_client = PaymentLink { api_client: client, api_config: config };
+      let link_client = PaymentLink { api_client: &client, api_config: &config };
       let _all_links = link_client.fetch_all().await?;
       let _dat1 = CreatePaymentLink {
         title: "Test".to_string(),
@@ -250,7 +250,7 @@ mod tests {
       };
       let client = Client::new();
 
-      let _payment_client = Payment::new(config, client);
+      let _payment_client = Payment::new(&config, &client);
       let _dat = InitializePayment {
           reference: "qyrbfcw".to_string(),
           customer_name: "Test Customer".to_string(),

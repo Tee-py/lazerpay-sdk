@@ -10,13 +10,13 @@ use self::{
 pub mod payload;
 mod response;
 
-pub struct Payment {
-    pub api_config: ApiConfig,
-    pub api_client: Client,
+pub struct Payment<'a> {
+    pub api_config: &'a ApiConfig,
+    pub api_client: &'a Client,
 }
 
-impl Payment {
-    pub fn new(config: ApiConfig, client: Client) -> Self {
+impl<'a> Payment<'a> {
+    pub fn new(config: &'a ApiConfig, client: &'a Client) -> Self {
         Self {
             api_client: client,
             api_config: config,

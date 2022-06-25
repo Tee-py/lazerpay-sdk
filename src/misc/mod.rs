@@ -9,13 +9,13 @@ use crate::{
     response::{ApiResponse, CoinData},
 };
 
-pub struct Misc {
-    pub api_config: ApiConfig,
-    pub api_client: Client,
+pub struct Misc<'a> {
+    pub api_config: &'a ApiConfig,
+    pub api_client: &'a Client,
 }
 
-impl Misc {
-    pub fn new(config: ApiConfig, client: Client) -> Self {
+impl<'a> Misc<'a> {
+    pub fn new(config: &'a ApiConfig, client: &'a Client) -> Self {
         Self {
             api_client: client,
             api_config: config,

@@ -16,13 +16,13 @@ pub struct Resp {
     pub status_code: i16,
 }
 
-pub struct CryptoTransfer {
-    pub api_client: Client,
-    pub api_config: ApiConfig,
+pub struct CryptoTransfer<'a> {
+    pub api_client: &'a Client,
+    pub api_config: &'a ApiConfig,
 }
 
-impl CryptoTransfer {
-    pub fn new(config: ApiConfig, client: Client) -> Self {
+impl<'a> CryptoTransfer<'a> {
+    pub fn new(config: &'a ApiConfig, client: &'a Client) -> Self {
         Self {
             api_client: client,
             api_config: config,

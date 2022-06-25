@@ -7,13 +7,13 @@ use self::{payload::SwapPayload, response::SwapData};
 pub mod payload;
 mod response;
 
-pub struct CryptoSwap {
-    pub api_config: ApiConfig,
-    pub api_client: Client,
+pub struct CryptoSwap<'a> {
+    pub api_config: &'a ApiConfig,
+    pub api_client: &'a Client,
 }
 
-impl CryptoSwap {
-    pub fn new(config: ApiConfig, client: Client) -> Self {
+impl<'a> CryptoSwap<'a> {
+    pub fn new(config: &'a ApiConfig, client: &'a Client) -> Self {
         Self {
             api_config: config,
             api_client: client,

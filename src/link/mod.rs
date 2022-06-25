@@ -12,13 +12,13 @@ mod response;
 
 type LinksResult = Result<PaymentLinksResponse<Vec<LinkData>>, Error>;
 
-pub struct PaymentLink {
-    pub api_client: Client,
-    pub api_config: ApiConfig,
+pub struct PaymentLink<'a> {
+    pub api_client: &'a Client,
+    pub api_config: &'a ApiConfig,
 }
 
-impl PaymentLink {
-    pub fn new(config: ApiConfig, client: Client) -> Self {
+impl<'a> PaymentLink<'a> {
+    pub fn new(config: &'a ApiConfig, client: &'a Client) -> Self {
         Self {
             api_client: client,
             api_config: config,
