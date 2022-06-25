@@ -1,29 +1,22 @@
 #[macro_use]
 extern crate serde_derive;
-mod config;
-mod error;
+pub mod config;
+pub mod error;
 pub mod link;
 pub mod misc;
 pub mod payments;
-mod response;
+pub mod response;
 pub mod swap;
 pub mod transfer;
+pub mod utils;
 
 #[cfg(test)]
 mod tests {
-    use crate::config::ApiConfig;
-    use crate::link::{payload::*, PaymentLink};
-    use crate::payments::Payment;
-    use crate::misc::*;
+    use crate::link::{payload::*};
     use crate::payments::payload::*;
     use crate::response::*;
-    use crate::swap::{payload::*, CryptoSwap};
-    use crate::transfer::{payload::*, CryptoTransfer};
-    use dotenv::dotenv;
-    use reqwest::blocking::Client;
-    use std::env;
-
-    type TestResult = Result<(), Box<dyn std::error::Error>>;
+    use crate::swap::{payload::*};
+    use crate::transfer::{payload::*};
 
     #[test]
     fn test_payload_structs() {
@@ -53,8 +46,8 @@ mod tests {
         assert_eq!(&link_data.typ, "Test");
         assert_eq!(&link_data.currency, "USD");
         assert_eq!(&link_data.amount, &56.8);
-        assert_eq!(&link_data.logo, "Test");
-        assert_eq!(&link_data.redirect_url, "Test");
+        assert!(!&link_data.logo.is_none());
+        assert!(!&link_data.redirect_url.is_none());
         assert_eq!(&update_link_data.status, "active");
         assert_eq!(&transfer_data.amount, &40.0);
         assert_eq!(&transfer_data.recipient, "0x2323rb23uri9bg3yu4r");
@@ -124,144 +117,6 @@ mod tests {
             "statusCode": 200
           }"#;
 
-        let res: ApiResponse<Vec<CoinData>> = serde_json::from_str(data).unwrap();
-
-        println!("Thirstyyyyy--> {}", res.data[0].created_at);
-    }
-
-    #[test]
-    fn test_misc() -> TestResult {
-        // Load Env Variables
-        dotenv().ok();
-        let secret_key = env::var("SECRET_KEY")?;
-        let public_key = env::var("PUBLIC_KEY")?;
-        let base_url = env::var("BASE_URL").unwrap();
-        let config = ApiConfig {
-            secret_key,
-            public_key,
-            base_url,
-        };
-        let client = Client::new();
-
-        let misc = Misc {
-            api_config: config,
-            api_client: client,
-        };
-        let coins = misc.get_accepted_coins()?;
-        let rate = misc.get_rate("ETH", "USD")?;
-        let balance = misc.get_balance("USDT")?;
-
-        assert_eq!(coins.status_code, 200);
-        assert_eq!(rate.status_code, 200);
-        assert_eq!(balance.status_code, 200);
-
-        Ok(())
-    }
-
-    #[test]
-    fn test_swap() -> TestResult {
-        dotenv().ok();
-        let secret_key = env::var("SECRET_KEY")?;
-        let public_key = env::var("PUBLIC_KEY")?;
-        let base_url = env::var("BASE_URL").unwrap();
-        let config = ApiConfig {
-            secret_key,
-            public_key,
-            base_url,
-        };
-        let client = Client::new();
-
-        let crypto_swap = CryptoSwap {
-            api_client: client,
-            api_config: config,
-        };
-        let swap_payload = SwapPayload {
-            to_coin: "USDT".to_string(),
-            from_coin: "BNB".to_string(),
-            amount: 0.1,
-            blockchain: "Binance Smart Chain".to_string(),
-        };
-        let _swap_res = crypto_swap.swap(&swap_payload);
-        let _amount_out = crypto_swap.amount_out(&swap_payload);
-        Ok(())
-    }
-    #[test]
-    fn test_transfer() -> TestResult {
-      dotenv().ok();
-      let secret_key = env::var("SECRET_KEY")?;
-      let public_key = env::var("PUBLIC_KEY")?;
-      let base_url = env::var("BASE_URL").unwrap();
-      let config = ApiConfig {
-          secret_key,
-          public_key,
-          base_url,
-      };
-      let client = Client::new();
-
-      let transfer_client = CryptoTransfer {
-        api_client: client,
-        api_config: config
-      };
-      let payload = Transfer {
-        amount: 100.0,
-        recipient: "0x0B4d358D349809037003F96A3593ff9015E89efA".to_string(),
-        coin: "USDT".to_string(),
-        blockchain: "Binance Smart Chain".to_string()
-      }; 
-      let res = transfer_client.transfer(&payload);
-      match res {
-        Ok(resp) => println!("Success --> {:?}", resp),
-        Err(err) => println!("Error --> {:?}", err),
-      }
-
-      Ok(())
-    }
-
-    #[test]
-    fn test_link() -> TestResult {
-      dotenv().ok();
-      let secret_key = env::var("SECRET_KEY")?;
-      let public_key = env::var("PUBLIC_KEY")?;
-      let base_url = env::var("BASE_URL").unwrap();
-      let config = ApiConfig {
-          secret_key,
-          public_key,
-          base_url,
-      };
-      let client = Client::new();
-
-      let link_client = PaymentLink { api_client: client, api_config: config };
-      let _all_links = link_client.fetch_all()?;
-      let dat1 = CreatePaymentLink {
-        title: "Test".to_string(),
-        description: "Test".to_string(),
-        amount: 40.0,
-        typ: "standard".to_string(),
-        currency: "USD".to_string(),
-        logo: "https://test.com/logo.png".to_string(),
-        redirect_url: "https://test.com/payment-redirect".to_string()
-      };
-      let _create_resp = link_client.create(&dat1)?;
-      let _link = link_client.fetch(&_create_resp.data.id);
-      Ok(())
-    }
-
-    #[test]
-    fn test_payment() -> TestResult {
-      dotenv().ok();
-      let secret_key = env::var("SECRET_KEY")?;
-      let public_key = env::var("PUBLIC_KEY")?;
-      let base_url = env::var("BASE_URL").unwrap();
-      let config = ApiConfig {
-          secret_key,
-          public_key,
-          base_url,
-      };
-      let client = Client::new();
-
-      let _payment_client = Payment { api_client: client, api_config: config };
-      // Test Initialize Payment
-      // Test Verify Payment
-      Ok(())
+        let _res: ApiResponse<Vec<CoinData>> = serde_json::from_str(data).unwrap();
     }
 }
