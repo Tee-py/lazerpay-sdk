@@ -19,8 +19,40 @@ pub struct PaymentData {
     pub accept_partial_payment: bool
 }
 
-pub struct VerifyPaymentResponse {
-    pub status: bool,
-    pub message: String,
-    pub api_response: String
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct CustomerInfo {
+    id: String,
+    customer_name: String,
+    customer_email: String,
+    customer_phone: Option<String>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct VerifyPaymentData {
+    id: String,
+    reference: String,
+    sender_address: Option<String>,
+    recipient_address: String,
+    actual_amount: f64,
+    amount_paid: Option<f64>,
+    amount_paid_fiat: Option<f64>,
+    fiat_amount: f64,
+    amount_received: Option<f64>,
+    amount_received_fiat: Option<f64>,
+    coin: String,
+    currency: String,
+    hash: Option<String>,
+    block_number: Option<String>,
+    created_at: String,
+    updated_at: String,
+    #[serde(rename="type")]
+    typ: String,
+    accept_partial_payment: bool,
+    status: String,
+    network: String,
+    blockchain: String,
+    customer: CustomerInfo,
+    fee_in_crypto: f64
 }

@@ -8,6 +8,7 @@ pub mod payments;
 pub mod response;
 pub mod swap;
 pub mod transfer;
+pub mod utils;
 
 #[cfg(test)]
 mod tests {
@@ -19,6 +20,7 @@ mod tests {
     use crate::response::*;
     use crate::swap::{payload::*, CryptoSwap};
     use crate::transfer::{payload::*, CryptoTransfer};
+    use crate::utils::generate_reference;
     use dotenv::dotenv;
     use reqwest::Client;
     use std::env;
@@ -124,9 +126,7 @@ mod tests {
             "statusCode": 200
           }"#;
 
-        let res: ApiResponse<Vec<CoinData>> = serde_json::from_str(data).unwrap();
-
-        println!("Thirstyyyyy--> {}", res.data[0].created_at);
+        let _res: ApiResponse<Vec<CoinData>> = serde_json::from_str(data).unwrap();
     }
 
     #[tokio::test]
@@ -251,8 +251,9 @@ mod tests {
       let client = Client::new();
 
       let _payment_client = Payment::new(&config, &client);
+      let tx_ref = generate_reference();
       let _dat = InitializePayment {
-          reference: "qyrbfcw".to_string(),
+          reference: tx_ref,
           customer_name: "Test Customer".to_string(),
           customer_email: "customer@lazertest.com".to_string(),
           coin: "USDT".to_string(),
@@ -263,7 +264,7 @@ mod tests {
       // Test Initialize Payment
       let _init_resp = _payment_client.initialize(&_dat).await?;
       // Test Verify Payment
-      let _ver_data = _payment_client.verify("weferf").await?;
+      let _ver_data = _payment_client.verify(&_dat.reference).await?;
       Ok(())
     }
 }

@@ -38,7 +38,6 @@ impl<'a> CryptoSwap<'a> {
 
     pub async fn amount_out(&self, payload: &SwapPayload) -> Result<ApiResponse<SwapData>, Error> {
         let url = format!("{}/swap/crypto/amount-out", self.api_config.base_url);
-        println!("Start --->");
         let resp = self
             .api_client
             .post(url)

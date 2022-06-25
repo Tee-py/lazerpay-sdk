@@ -4,7 +4,7 @@ use crate::{config::ApiConfig, error::Error, response::ApiResponse};
 
 use self::{
     payload::InitializePayment,
-    response::{PaymentData, VerifyPaymentResponse},
+    response::{PaymentData, VerifyPaymentData},
 };
 
 pub mod payload;
@@ -40,7 +40,7 @@ impl<'a> Payment<'a> {
         }
     }
 
-    pub async fn verify(&self, tx_ref: &str) -> Result<VerifyPaymentResponse, Error> {
+    pub async fn verify(&self, tx_ref: &str) -> Result<ApiResponse<VerifyPaymentData>, Error> {
         let url = format!("{}/transaction/verify/{}", self.api_config.base_url, tx_ref);
         let resp = self
             .api_client
@@ -50,14 +50,7 @@ impl<'a> Payment<'a> {
             .await?;
 
         match resp.status() {
-            StatusCode::OK => {
-                let resp_struct = VerifyPaymentResponse {
-                    status: true,
-                    message: "Payment Retreived".to_string(),
-                    api_response: resp.text().await?,
-                };
-                Ok(resp_struct)
-            }
+            StatusCode::OK => Ok(resp.json().await?),
             _ => Err(Error::RequestError(resp.json().await?)),
         }
     }
