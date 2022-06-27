@@ -10,6 +10,10 @@ use crate::{
     response::{ApiResponse, CoinData},
 };
 
+/// Performs Miscellaneous operations on the Lazerpay API
+/// # Fields
+/// * `api_config` - ApiConfig
+/// * `api_client` - HTTP Request Client
 pub struct Misc<'a> {
     pub api_config: &'a ApiConfig,
     pub api_client: &'a Client,
