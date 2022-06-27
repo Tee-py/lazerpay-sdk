@@ -1,20 +1,11 @@
-use crate::{config::ApiConfig, error::Error, constants::BASE_URL};
+use crate::{config::ApiConfig, constants::BASE_URL, error::Error};
 
-use self::payload::Transfer;
+use self::{payload::Transfer, response::TransferResponse};
 
 pub mod payload;
 mod response;
 
 use reqwest::{Client, StatusCode};
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Resp {
-    pub message: String,
-    pub status: String,
-    #[serde(rename = "statusCode")]
-    pub status_code: i16,
-}
 
 pub struct CryptoTransfer<'a> {
     pub api_client: &'a Client,
@@ -28,7 +19,7 @@ impl<'a> CryptoTransfer<'a> {
             api_config: config,
         }
     }
-    pub async fn transfer(&self, payload: &Transfer) -> Result<Resp, Error> {
+    pub async fn transfer(&self, payload: &Transfer) -> Result<TransferResponse, Error> {
         let url = format!("{}/transfer", BASE_URL);
         let resp = self
             .api_client
