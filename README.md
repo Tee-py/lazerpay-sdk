@@ -1,4 +1,4 @@
-lazerpay
+🦀 lazerpay
 =====
 A Rust SDK For Integrating Lazerpay payments API
 
