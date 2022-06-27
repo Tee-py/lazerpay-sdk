@@ -7,6 +7,8 @@ use self::{
     response::{LinkData, PaymentLinksResponse},
 };
 
+use crate::constants::BASE_URL;
+
 pub mod payload;
 mod response;
 
@@ -25,7 +27,7 @@ impl<'a> PaymentLink<'a> {
         }
     }
     pub async fn fetch_all(&self) -> LinksResult {
-        let url = format!("{}/payment-links", self.api_config.base_url);
+        let url = format!("{}/payment-links", BASE_URL);
         let resp = self
             .api_client
             .get(url)
@@ -41,7 +43,7 @@ impl<'a> PaymentLink<'a> {
         &self,
         payload: &CreatePaymentLink,
     ) -> Result<ApiResponse<LinkData>, Error> {
-        let url = format!("{}/payment-links", self.api_config.base_url);
+        let url = format!("{}/payment-links", BASE_URL);
         let resp = self
             .api_client
             .post(url)
@@ -56,7 +58,7 @@ impl<'a> PaymentLink<'a> {
     }
 
     pub async fn fetch(&self, reference: &str) -> Result<ApiResponse<LinkData>, Error> {
-        let url = format!("{}/payment-links/{}", self.api_config.base_url, reference);
+        let url = format!("{}/payment-links/{}", BASE_URL, reference);
         let resp = self
             .api_client
             .get(url)
@@ -74,7 +76,7 @@ impl<'a> PaymentLink<'a> {
         reference: &str,
         payload: &UpdatePaymentLink,
     ) -> Result<ApiResponse<LinkData>, Error> {
-        let url = format!("{}/payment-links/{}", self.api_config.base_url, reference);
+        let url = format!("{}/payment-links/{}", BASE_URL, reference);
         let resp = self
             .api_client
             .put(url)

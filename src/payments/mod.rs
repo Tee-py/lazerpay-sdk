@@ -1,7 +1,6 @@
 use reqwest::{Client, StatusCode};
 
-use crate::{config::ApiConfig, error::Error, response::ApiResponse};
-
+use crate::{config::ApiConfig, error::Error, response::ApiResponse, constants::BASE_URL};
 use self::{
     payload::InitializePayment,
     response::{PaymentData, VerifyPaymentData},
@@ -26,7 +25,7 @@ impl<'a> Payment<'a> {
         &self,
         payload: &InitializePayment,
     ) -> Result<ApiResponse<PaymentData>, Error> {
-        let url = format!("{}/transaction/initialize", self.api_config.base_url);
+        let url = format!("{}/transaction/initialize", BASE_URL);
         let resp = self
             .api_client
             .post(url)
@@ -41,7 +40,7 @@ impl<'a> Payment<'a> {
     }
 
     pub async fn verify(&self, tx_ref: &str) -> Result<ApiResponse<VerifyPaymentData>, Error> {
-        let url = format!("{}/transaction/verify/{}", self.api_config.base_url, tx_ref);
+        let url = format!("{}/transaction/verify/{}", BASE_URL, tx_ref);
         let resp = self
             .api_client
             .get(url)

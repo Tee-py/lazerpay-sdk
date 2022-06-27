@@ -1,4 +1,4 @@
-use crate::{config::ApiConfig, error::Error};
+use crate::{config::ApiConfig, error::Error, constants::BASE_URL};
 
 use self::payload::Transfer;
 
@@ -29,7 +29,7 @@ impl<'a> CryptoTransfer<'a> {
         }
     }
     pub async fn transfer(&self, payload: &Transfer) -> Result<Resp, Error> {
-        let url = format!("{}/transfer", self.api_config.base_url);
+        let url = format!("{}/transfer", BASE_URL);
         let resp = self
             .api_client
             .post(url)

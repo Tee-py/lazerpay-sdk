@@ -2,6 +2,15 @@
 name = "lazerpay"
 version = "0.1.0"
 edition = "2021"
+authors = ["Tobiloba Emmanuel <emmanueloluwatobi2000@gmail.com>"]
+description = "An sdk for integrating lazerpay cryptocurrency payments api in rust."
+repository = "https://github.com/Tee-py/lazerpay-sdk"
+homepage = "https://github.com/Tee-py/lazerpay-sdk"
+readme = "README.md"
+license = "MIT"
+keywords = ["lazerpay", "crypto", "cryptocurrency", "payment", "sdk"]
+categories = ["api-bindings"]
+exclude = [".github/*", "tests/*"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

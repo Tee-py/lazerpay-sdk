@@ -2,6 +2,7 @@ mod response;
 
 use reqwest::{Client, StatusCode};
 use response::*;
+use crate::constants::BASE_URL;
 
 use crate::{
     config::ApiConfig,
@@ -9,6 +10,10 @@ use crate::{
     response::{ApiResponse, CoinData},
 };
 
+/// Performs Miscellaneous operations on the Lazerpay API
+/// # Fields
+/// * `api_config` - ApiConfig
+/// * `api_client` - HTTP Request Client
 pub struct Misc<'a> {
     pub api_config: &'a ApiConfig,
     pub api_client: &'a Client,
@@ -22,7 +27,7 @@ impl<'a> Misc<'a> {
         }
     }
     pub async fn get_accepted_coins(&self) -> Result<ApiResponse<Vec<CoinData>>, Error> {
-        let route = format!("{}/coins", self.api_config.base_url);
+        let route = format!("{}/coins", BASE_URL);
         let resp = self
             .api_client
             .get(route)
@@ -38,7 +43,7 @@ impl<'a> Misc<'a> {
     pub async fn get_rate(&self, coin: &str, currency: &str) -> Result<GetRateResponse, Error> {
         let route = format!(
             "{}/rate?coin={}&currency={}",
-            self.api_config.base_url, coin, currency
+            BASE_URL, coin, currency
         );
         let resp = self
             .api_client
@@ -53,7 +58,7 @@ impl<'a> Misc<'a> {
     }
 
     pub async fn get_balance(&self, coin: &str) -> Result<ApiResponse<BalanceData>, Error> {
-        let route = format!("{}/wallet/balance?coin={}", self.api_config.base_url, coin);
+        let route = format!("{}/wallet/balance?coin={}", BASE_URL, coin);
         let resp = self
             .api_client
             .get(route)

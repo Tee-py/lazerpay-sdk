@@ -2,9 +2,9 @@ extern crate serde;
 extern crate serde_json;
 
 use std::fmt;
-// use serde::{Deserialize, Serialize};
 use serde::de::{self, value, Deserialize, Deserializer, Visitor, SeqAccess};
 
+/// Structure of Errors from lazerpay API
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ApiError {
     #[serde(rename = "statusCode")]
@@ -43,6 +43,9 @@ fn string_or_vec<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
     deserializer.deserialize_any(StringOrVec)
 }
 
+/// Enum for SDK Errors
+/// Error::RequestError => Errors from API Request
+/// Error::ClientError => Errors from the http request client (i.e reqwest::Client)
 #[derive(Debug)]
 pub enum Error {
     RequestError(ApiError),

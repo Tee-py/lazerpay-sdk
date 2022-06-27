@@ -9,6 +9,7 @@ pub mod response;
 pub mod swap;
 pub mod transfer;
 pub mod utils;
+mod constants;
 
 #[cfg(test)]
 mod tests {
