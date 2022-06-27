@@ -1,7 +1,7 @@
 mod common;
 
 use common::{set_up, TestResult};
-use lazerpay::{misc::*};
+use Lazerpay::{misc::*};
 
 
 

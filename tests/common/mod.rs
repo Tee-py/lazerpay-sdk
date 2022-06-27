@@ -1,7 +1,7 @@
 use std::env;
 
 use dotenv::dotenv;
-use lazerpay::{config::ApiConfig, error::Error};
+use Lazerpay::{config::ApiConfig, error::Error};
 use reqwest::Client;
 
 pub type TestResult = Result<(), Error>;

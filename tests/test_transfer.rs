@@ -1,7 +1,7 @@
 mod common;
 
 use common::{set_up, TestResult};
-use lazerpay::{transfer::{payload::*, CryptoTransfer}};
+use Lazerpay::{transfer::{payload::*, CryptoTransfer}};
 
 #[tokio::test]
 async fn test() -> TestResult {
