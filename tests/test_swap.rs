@@ -1,7 +1,7 @@
 mod common;
 
 use common::{set_up, TestResult};
-use Lazerpay::swap::{payload::*, CryptoSwap};
+use lazerpay::swap::{payload::*, CryptoSwap};
 
 #[tokio::test]
 async fn test_swap() -> TestResult {

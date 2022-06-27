@@ -1,7 +1,7 @@
 mod common;
 
 use common::{set_up, TestResult};
-use Lazerpay::link::{payload::*, PaymentLink};
+use lazerpay::link::{payload::*, PaymentLink};
 
 #[tokio::test]
 async fn test() -> TestResult {

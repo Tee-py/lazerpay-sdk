@@ -1,8 +1,8 @@
 mod common;
 
 use common::{set_up, TestResult};
-use Lazerpay::payments::{payload::*, Payment};
-use Lazerpay::utils::*;
+use lazerpay::payments::{payload::*, Payment};
+use lazerpay::utils::*;
 
 #[tokio::test]
 async fn test() -> TestResult {
