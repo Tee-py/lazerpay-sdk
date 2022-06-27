@@ -18,7 +18,7 @@ To use the sdk in your application, add this to your `Cargo.toml`:
 lazerpay = "0.1.0"
 ```
 
-You also need to get api keys(`SECRET_KEY` & `PUBLIC_KEY`) from your lazerpay dashboard and add then to a `.env` file.
+You also need to get api keys(`SECRET_KEY` & `PUBLIC_KEY`) from your lazerpay dashboard and add them to a `.env` file.
 
 The sdk consist of `misc`, `link`, `swap`, `payments` and `transfer` modules. Each module consist of payload and response structs.
 
