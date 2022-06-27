@@ -1,8 +1,14 @@
-🦀 lazerpay
-=====
+# 🦀 lazerpay
+
 A Rust SDK For Integrating Lazerpay payments API
 
+[![Lazerpay-sdk](https://github.com/Tee-py/lazerpay-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/Tee-py/lazerpay-sdk/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Crates.io](https://img.shields.io/badge/crates.io-v0.1.0-orange)](https://crates.io/crates/lazerpay)
+[![Rust](https://img.shields.io/badge/rustc-v1.57.0-red)](https://github.com/Tee-py/lazerpay-sdk)
+
 ## Overview
+
 Lazerpay allows you to integrate [`lazerpay api`](https://docs.lazerpay.finance/) in rust.
 
 To use the sdk in your application, add this to your `Cargo.toml`:
@@ -24,12 +30,12 @@ This is used to get accepted coins, get rates and get user balance from the laze
 
 These are the response structs as contained in the `misc::response` sub-module:
 
-| Name | Description |
-| :--- | :--- |
-| `GetRateResponse` | Response for `get_rate` |
-| `BalanceData` | Anatomy of User Balance Data |
+| Name              | Description                  |
+| :---------------- | :--------------------------- |
+| `GetRateResponse` | Response for `get_rate`      |
+| `BalanceData`     | Anatomy of User Balance Data |
 
-#### Example: 
+#### Example:
 
 ```rust
 use std::env;
@@ -47,7 +53,7 @@ async fn main() -> ResultType {
 
     dotenv().ok();
     // You can replace the `SECRET_KEY` & `PUBLIC_KEY` with the name in your .env file.
-    let secret_key = env::var("SECRET_KEY").unwrap(); 
+    let secret_key = env::var("SECRET_KEY").unwrap();
     let public_key = env::var("PUBLIC_KEY").unwrap();
 
     let config = ApiConfig {
@@ -67,14 +73,15 @@ async fn main() -> ResultType {
 ```
 
 ## Usage: `link::PaymentLink`
+
 This module is used for creation and payment links management.
 
 ### Payload Structs
 
 These are the payload structs contained in the `link::payload` sub-module:
 
-| Name | Description |
-| :--- | :--- |
+| Name                | Description                        |
+| :------------------ | :--------------------------------- |
 | `CreatePaymentLink` | Payload for payment link creation. |
 | `UpdatePaymentLink` | Payload for Updating payment link. |
 
@@ -82,9 +89,9 @@ These are the payload structs contained in the `link::payload` sub-module:
 
 These are the response structs contained in the `link::response` sub-module:
 
-| Name | Description |
-| :--- | :--- |
-| `LinkData` | Anatomy of A PaymentLink Data. |
+| Name                   | Description                     |
+| :--------------------- | :------------------------------ |
+| `LinkData`             | Anatomy of A PaymentLink Data.  |
 | `PaymentLinksResponse` | Fetch All Links Response Struct |
 
 ```rust
@@ -103,7 +110,7 @@ async fn main() -> ResultType {
 
     dotenv().ok();
     // You can replace the `SECRET_KEY` & `PUBLIC_KEY` with the name in your .env file.
-    let secret_key = env::var("SECRET_KEY").unwrap(); 
+    let secret_key = env::var("SECRET_KEY").unwrap();
     let public_key = env::var("PUBLIC_KEY").unwrap();
 
     let config = ApiConfig {
@@ -141,24 +148,24 @@ async fn main() -> ResultType {
 ```
 
 ## Usage: `payments::Payment`
+
 This module is used for creation and payment links management.
 
 ### Payload Structs
 
 These are the payload structs contained in the `payments::payload` sub-module:
 
-| Name | Description |
-| :--- | :--- |
+| Name                | Description                                   |
+| :------------------ | :-------------------------------------------- |
 | `InitializePayment` | Payload for initializing payment transaction. |
-
 
 ### Response Structs
 
 These are the response structs contained in the `link::response` sub-module:
 
-| Name | Description |
-| :--- | :--- |
-| `PaymentData` | Payment Information |
+| Name                | Description                          |
+| :------------------ | :----------------------------------- |
+| `PaymentData`       | Payment Information                  |
 | `VerifyPaymentData` | Payment Verification Response Struct |
 
 ```rust
@@ -178,7 +185,7 @@ async fn main() -> ResultType {
 
     dotenv().ok();
     // You can replace the `SECRET_KEY` & `PUBLIC_KEY` with the name in your .env file.
-    let secret_key = env::var("SECRET_KEY").unwrap(); 
+    let secret_key = env::var("SECRET_KEY").unwrap();
     let public_key = env::var("PUBLIC_KEY").unwrap();
 
     let config = ApiConfig {
@@ -209,9 +216,6 @@ async fn main() -> ResultType {
 ```
 
 For sample Codes on Usage For other Modules check the [`tests`](https://github.com/Tee-py/lazerpay-sdk/tree/main/tests) folder.
-
-
-
 
 ### License
 
