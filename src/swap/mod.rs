@@ -1,4 +1,4 @@
-use crate::{config::ApiConfig, error::Error, response::ApiResponse};
+use crate::{config::ApiConfig, error::Error, response::ApiResponse, constants::BASE_URL};
 use reqwest::Client;
 use reqwest::StatusCode;
 
@@ -21,7 +21,7 @@ impl<'a> CryptoSwap<'a> {
     }
 
     pub async fn swap(&self, payload: &SwapPayload) -> Result<(), Error> {
-        let url = format!("{}/swap/crypto", self.api_config.base_url);
+        let url = format!("{}/swap/crypto", BASE_URL);
         let resp = self
             .api_client
             .post(url)
@@ -37,7 +37,7 @@ impl<'a> CryptoSwap<'a> {
     }
 
     pub async fn amount_out(&self, payload: &SwapPayload) -> Result<ApiResponse<SwapData>, Error> {
-        let url = format!("{}/swap/crypto/amount-out", self.api_config.base_url);
+        let url = format!("{}/swap/crypto/amount-out", BASE_URL);
         let resp = self
             .api_client
             .post(url)

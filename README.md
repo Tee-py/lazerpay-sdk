@@ -49,12 +49,10 @@ async fn main() -> ResultType {
     // You can replace the `SECRET_KEY` & `PUBLIC_KEY` with the name in your .env file.
     let secret_key = env::var("SECRET_KEY").unwrap(); 
     let public_key = env::var("PUBLIC_KEY").unwrap();
-    let base_url = env::var("BASE_URL").unwrap();
 
     let config = ApiConfig {
         secret_key,
         public_key,
-        base_url,
     };
 
     let client = Client::new();
@@ -107,12 +105,10 @@ async fn main() -> ResultType {
     // You can replace the `SECRET_KEY` & `PUBLIC_KEY` with the name in your .env file.
     let secret_key = env::var("SECRET_KEY").unwrap(); 
     let public_key = env::var("PUBLIC_KEY").unwrap();
-    let base_url = env::var("BASE_URL").unwrap();
 
     let config = ApiConfig {
         secret_key,
         public_key,
-        base_url,
     };
 
     let client = Client::new();
